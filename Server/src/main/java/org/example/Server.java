@@ -99,7 +99,7 @@ public class Server implements Runnable {
                 SimpleDateFormat sdf = new SimpleDateFormat();
                 sdf.applyPattern("yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();
-                String mess = sdf.format(date) + " / " + username + " : " + out;
+                String mess = sdf.format(date) + "/ " + username + " : " + out;
 
                 try {
                     OutputStream os = socketList.get(i).getOutputStream();
@@ -110,18 +110,17 @@ public class Server implements Runnable {
                     bw.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } finally {
-                    lock.unlock();
                 }
             }
         }
+        lock.unlock();
     }
 
     private void onceOut(String oneOut) {
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
-        String messa = sdf.format(date) + " / " + oneOut;
+        String messa = sdf.format(date) + "/ " + oneOut;
         System.out.println("Client " + messa);
         try {
             OutputStream os = this.csocket.getOutputStream();

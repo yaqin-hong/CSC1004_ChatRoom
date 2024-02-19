@@ -103,7 +103,7 @@ public class Server implements Runnable {
                     DataOutputStream dout = new DataOutputStream(os);
                     OutputStreamWriter w = new OutputStreamWriter(dout);
                     BufferedWriter bw = new BufferedWriter(w);
-                    bw.write(mess);
+                    bw.write(mess + "\r\n");
                     bw.flush();
                 } catch (IOException e) {
                     e.printStackTrace();

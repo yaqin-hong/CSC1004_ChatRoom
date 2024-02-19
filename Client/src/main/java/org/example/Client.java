@@ -30,7 +30,7 @@ public class Client {
             String key = kr.readLine();
             while (!key.equals("stop")) {
                 if (key != null) {
-                    dout.writeUTF(key + "\r\n");
+                    dout.writeUTF(key +" \r\n");
                     dout.flush();
                 }
                 key = kr.readLine();

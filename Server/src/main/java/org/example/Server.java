@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.io.DataInputStream.readUTF;
 
@@ -88,7 +90,8 @@ public class Server implements Runnable {
     }
 
     private static void broadcastMessage(String username, String out) {
-
+        Lock lock = new ReentrantLock();
+        lock.lock();
         for (int i = 0; i < nameList.size(); i++) {
             if (username.equals(nameList.get(i))) {
 
@@ -107,6 +110,8 @@ public class Server implements Runnable {
                     bw.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    lock.unlock();
                 }
             }
         }

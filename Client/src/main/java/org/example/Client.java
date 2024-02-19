@@ -11,27 +11,32 @@ public class Client {
             OutputStream os = s.getOutputStream();
             DataOutputStream dout = new DataOutputStream(os);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(dout));
-            Thread readerThread = new Thread(() -> {
-                try {
-                    String message;
-                    while (s.isConnected()) {
-                        message = din.readUTF();
-                        if (message != null) {
-                            System.out.println(message);
+            Thread readerThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(din));
+                        String message;
+                        while (s.isConnected()) {
+                            message = br.readLine();
+                            if (message != null) {
+                                System.out.println(message);
+                            }
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             });
             readerThread.start();
 
             BufferedReader kr = new BufferedReader(new InputStreamReader(System.in));
-            String key = kr.readLine();
+            String key = "";
+            key = kr.readLine();
             while (!key.equals("stop")) {
                 if (key != null) {
-                    dout.writeUTF(key +" \r\n");
-                    dout.flush();
+                    bw.write(key + "\r\n");
+                    bw.flush();
                 }
                 key = kr.readLine();
             }

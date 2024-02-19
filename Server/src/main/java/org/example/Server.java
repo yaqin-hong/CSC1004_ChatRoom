@@ -22,8 +22,8 @@ public class Server implements Runnable {
 
     public static void main(String[] args) throws IOException {
         ServerSocket ss = new ServerSocket(8888);
-        nameList = new ArrayList<String>();
-        socketList = new ArrayList<Socket>();
+        nameList = new ArrayList<>();
+        socketList = new ArrayList<>();
         System.out.println("Start Server....");
 
         while (true) {
@@ -39,13 +39,13 @@ public class Server implements Runnable {
         try {
             InputStream is = this.csocket.getInputStream();
             DataInputStream din = new DataInputStream(is);
-            // InputStreamReader r = new InputStreamReader(din);
-            // BufferedReader br = new BufferedReader(r);
+            InputStreamReader r = new InputStreamReader(din);
+            BufferedReader br = new BufferedReader(r);
             String message = "";
             this.onceOut("Welcome to the chatroom, please input your username: ");
 
             do {
-                message = din.readUTF();
+                message = br.readLine();
 
                 if (nameList.contains(message)) {
                     this.onceOut("This username already exists, please input another one: ");
@@ -61,28 +61,28 @@ public class Server implements Runnable {
             } while (this.csocket.isConnected());
 
             while (this.csocket.isConnected()) {
-                message = din.readUTF();
+                message = br.readLine();
                 if (message != null) {
                     System.out.println(this.username + ": " + message);
                     broadcastMessage(this.username, message);
                 } else {
-                    this.csocket.close();
                     break;
                 }
             }
+
             message = "Client " + this.username + " exits the chatroom.";
             broadcastMessage(this.username, message);
+            System.out.println(message);
             int index = nameList.indexOf(this.username);
             nameList.remove(index);
             socketList.remove(index);
             this.username = null;
-            Thread.sleep(1000);
             this.csocket.shutdownInput();
             this.csocket.shutdownOutput();
             din.close();
             is.close();
             this.csocket.close();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -101,10 +101,10 @@ public class Server implements Runnable {
                 try {
                     OutputStream os = socketList.get(i).getOutputStream();
                     DataOutputStream dout = new DataOutputStream(os);
-//                    OutputStreamWriter w = new OutputStreamWriter(dout);
-//                    BufferedWriter bw = new BufferedWriter(w);
-                    dout.writeUTF(mess);
-                    dout.flush();
+                    OutputStreamWriter w = new OutputStreamWriter(dout);
+                    BufferedWriter bw = new BufferedWriter(w);
+                    bw.write(mess);
+                    bw.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -121,11 +121,10 @@ public class Server implements Runnable {
         try {
             OutputStream os = this.csocket.getOutputStream();
             DataOutputStream dout = new DataOutputStream(os);
-            // OutputStreamWriter w = new OutputStreamWriter(dout);
-            // BufferedWriter bw = new BufferedWriter(w);
-            dout.writeUTF(messa);
-            dout.flush();
-            // dout.close();
+            OutputStreamWriter w = new OutputStreamWriter(dout);
+            BufferedWriter bw = new BufferedWriter(w);
+            bw.write(messa + "\r\n");
+            bw.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

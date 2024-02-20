@@ -9,5 +9,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-nop:2.1.0-alpha1" level="project" />
+    <orderEntry type="library" name="Gradle: org.xerial:sqlite-jdbc:3.45.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.1.0-alpha1" level="project" />
   </component>
 </module>

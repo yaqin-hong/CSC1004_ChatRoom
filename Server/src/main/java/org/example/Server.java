@@ -17,19 +17,21 @@ public class Server implements Runnable {
     int number = 0;
     static ArrayList<String> nameList;
     static ArrayList<Socket> socketList;
-
+    static sqlite sqlite = null;
     Server(Socket s) {
         this.csocket = s;
         this.username = null;
     }
 
     public static void main(String[] args) throws IOException {
+        sqlite = new sqlite();
+        System.out.println("Open database successfully.");
         ServerSocket ss = new ServerSocket(8888);
         nameList = new ArrayList<>();
         socketList = new ArrayList<>();
         System.out.println("Start Server....");
 
-        while (true) {
+        while (!ss.isClosed()) {
             Socket s = ss.accept();
             System.out.println("Start Connecting....");
             Server ser = new Server(s);
@@ -65,14 +67,22 @@ public class Server implements Runnable {
                 message = br.readLine();
                 if (message != null) {
                     number += 1;
-                    System.out.println(this.username + "|" + number + ": " + message);
-                    broadcastMessage(this.username, number, message);
+                    if (message.indexOf("searchid") == 0) {
+                        message = sqlite.searchName(this.username);
+                        this.onceOut(message);
+                    } else if (message.indexOf("searchchat: ") == 0) {
+                        message = sqlite.searchKey(message.substring(11));
+                        this.onceOut(message);
+                    } else {
+                        System.out.println(this.username + "|" + number + ": " + message);
+                        broadcastMessage(this.username, number, message);
+                    }
                 } else {
                     break;
                 }
             }
 
-            message = "Client " + this.username + " exits the chatroom.";
+            message = "Client " + this.username + " quits the chatroom.";
             broadcastMessage(this.username, number, message);
             System.out.println(message);
             int index = nameList.indexOf(this.username);

@@ -1,6 +1,8 @@
 package org.example;
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
+
 public class Client {
     public static void main(String[] args) {
         try {
@@ -30,15 +32,18 @@ public class Client {
             });
             readerThread.start();
 
-            BufferedReader kr = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader kr = new BufferedReader(new InputStreamReader(System.in, "GBK"));
+            Scanner sc = new Scanner(System.in);
             String key = "";
-            key = kr.readLine();
+            // key = kr.readLine();
+            key = sc.nextLine();
             while (!key.equals("stop")) {
                 if (key != null) {
                     bw.write(key + "\r\n");
                     bw.flush();
                 }
-                key = kr.readLine();
+                // key = kr.readLine();
+                key = sc.nextLine();
             }
             readerThread.interrupt();
             kr.close();

@@ -14,6 +14,7 @@ import static java.io.DataInputStream.readUTF;
 public class Server implements Runnable {
     String username;
     Socket csocket;
+    int number = 0;
     static ArrayList<String> nameList;
     static ArrayList<Socket> socketList;
 
@@ -36,7 +37,6 @@ public class Server implements Runnable {
             thr.start();
         }
     }
-
     public void run() {
         try {
             InputStream is = this.csocket.getInputStream();
@@ -48,7 +48,6 @@ public class Server implements Runnable {
 
             do {
                 message = br.readLine();
-
                 if (nameList.contains(message)) {
                     this.onceOut("This username already exists, please input another one: ");
                 } else {
@@ -56,7 +55,7 @@ public class Server implements Runnable {
                     message = "Welcome " + this.username + " to the chatroom";
                     nameList.add(this.username);
                     socketList.add(this.csocket);
-                    broadcastMessage(this.username, message);
+                    broadcastMessage(this.username, number, message);
                     this.onceOut(message);
                     break;
                 }
@@ -65,15 +64,16 @@ public class Server implements Runnable {
             while (this.csocket.isConnected()) {
                 message = br.readLine();
                 if (message != null) {
-                    System.out.println(this.username + ": " + message);
-                    broadcastMessage(this.username, message);
+                    number += 1;
+                    System.out.println(this.username + "|" + number + ": " + message);
+                    broadcastMessage(this.username, number, message);
                 } else {
                     break;
                 }
             }
 
             message = "Client " + this.username + " exits the chatroom.";
-            broadcastMessage(this.username, message);
+            broadcastMessage(this.username, number, message);
             System.out.println(message);
             int index = nameList.indexOf(this.username);
             nameList.remove(index);
@@ -89,7 +89,7 @@ public class Server implements Runnable {
         }
     }
 
-    private static void broadcastMessage(String username, String out) {
+    private static void broadcastMessage(String username, int number, String out) {
         Lock lock = new ReentrantLock();
         lock.lock();
         for (int i = 0; i < nameList.size(); i++) {
@@ -99,7 +99,7 @@ public class Server implements Runnable {
                 SimpleDateFormat sdf = new SimpleDateFormat();
                 sdf.applyPattern("yyyy/MM/dd HH:mm:ss");
                 Date date = new Date();
-                String mess = sdf.format(date) + "/ " + username + " : " + out;
+                String mess = sdf.format(date) + "/ " + username + "|" + number + " : " + out;
 
                 try {
                     OutputStream os = socketList.get(i).getOutputStream();

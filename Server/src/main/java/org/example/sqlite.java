@@ -24,6 +24,7 @@ public class sqlite {
             e.printStackTrace();
         }
     }
+    // add each message into chat record storage
     public void addRecord(String time, String name, String chat) {
         String sqlcmd = "INSERT INTO CHATROOM (TIME,USERNAME,CHAT) " +
                 "VALUES ('" + time + "','" + name + "','" + chat + "');";
@@ -34,6 +35,7 @@ public class sqlite {
             e.printStackTrace();
         }
     }
+    // using Clients' ID to search chat record
     public String searchName(String name) {
         String sqlcmd = "SELECT * FROM CHATROOM WHERE USERNAME='" + name + "';";
         String ret = "";
@@ -48,6 +50,7 @@ public class sqlite {
         }
         return ret;
     }
+    // using Clients' keywords to search chat record
     public String searchKey(String key) {
         String sqlcmd = "SELECT * FROM CHATROOM WHERE CHAT like '%" + key + "%';";
         String ret = "";

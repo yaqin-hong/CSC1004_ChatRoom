@@ -13,6 +13,8 @@ public class Client {
             OutputStream os = s.getOutputStream();
             DataOutputStream dout = new DataOutputStream(os);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(dout));
+
+            // turn internet input into a thread
             Thread readerThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -32,17 +34,16 @@ public class Client {
             });
             readerThread.start();
 
+            // let keyboard input as usual
             BufferedReader kr = new BufferedReader(new InputStreamReader(System.in, "GBK"));
             Scanner sc = new Scanner(System.in);
             String key = "";
-            // key = kr.readLine();
             key = sc.nextLine();
             while (!key.equals("stop")) {
                 if (key != null) {
                     bw.write(key + "\r\n");
                     bw.flush();
                 }
-                // key = kr.readLine();
                 key = sc.nextLine();
             }
             readerThread.interrupt();

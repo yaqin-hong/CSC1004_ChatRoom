@@ -45,9 +45,10 @@ public class Server implements Runnable {
             DataInputStream din = new DataInputStream(is);
             InputStreamReader r = new InputStreamReader(din);
             BufferedReader br = new BufferedReader(r);
+
+            // input username and make sure it won't repeat.
             String message = "";
             this.onceOut("Welcome to the chatroom, please input your username: ");
-
             do {
                 message = br.readLine();
                 if (nameList.contains(message)) {
@@ -63,6 +64,8 @@ public class Server implements Runnable {
                 }
             } while (this.csocket.isConnected());
 
+            // deal with other messages except username
+            // can record chat messages and search for information both though ID and chat keywords.
             while (this.csocket.isConnected()) {
                 message = br.readLine();
                 if (message != null) {
@@ -82,6 +85,7 @@ public class Server implements Runnable {
                 }
             }
 
+            // deal with Client quits chatroom
             message = "Client " + this.username + " quits the chatroom.";
             broadcastMessage(this.username, number, message);
             System.out.println(message);
@@ -98,7 +102,7 @@ public class Server implements Runnable {
             e.printStackTrace();
         }
     }
-
+    // send a message to everyone except the one who sends it
     private static void broadcastMessage(String username, int number, String out) {
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy/MM/dd HH:mm:ss");
@@ -124,7 +128,7 @@ public class Server implements Runnable {
         }
         lock.unlock();
     }
-
+    // send a message only to the one who sends it.
     private void onceOut(String oneOut) {
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy/MM/dd HH:mm:ss");

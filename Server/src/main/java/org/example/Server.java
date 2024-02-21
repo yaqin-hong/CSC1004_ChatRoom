@@ -67,10 +67,10 @@ public class Server implements Runnable {
                 message = br.readLine();
                 if (message != null) {
                     number += 1;
-                    if (message.indexOf("searchid") == 0) {
-                        message = sqlite.searchName(this.username);
+                    if (message.indexOf("searchid:") == 0) {
+                        message = sqlite.searchName(message.substring(9));
                         this.onceOut(message);
-                    } else if (message.indexOf("searchchat: ") == 0) {
+                    } else if (message.indexOf("searchchat:") == 0) {
                         message = sqlite.searchKey(message.substring(11));
                         this.onceOut(message);
                     } else {
@@ -100,17 +100,16 @@ public class Server implements Runnable {
     }
 
     private static void broadcastMessage(String username, int number, String out) {
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
         Lock lock = new ReentrantLock();
         lock.lock();
         for (int i = 0; i < nameList.size(); i++) {
             if (username.equals(nameList.get(i))) {
-
+                sqlite.addRecord(sdf.format(date), username, out);
             } else {
-                SimpleDateFormat sdf = new SimpleDateFormat();
-                sdf.applyPattern("yyyy/MM/dd HH:mm:ss");
-                Date date = new Date();
                 String mess = sdf.format(date) + "/ " + username + "|" + number + " : " + out;
-
                 try {
                     OutputStream os = socketList.get(i).getOutputStream();
                     DataOutputStream dout = new DataOutputStream(os);
